@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+<head>
+    <meta charset="utf-8">
+    <title>FoundationDB Examples</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="html5, angularjs, nodejs, foundationdb">
+    <meta name="author" content="Bruno Bonnin">
+    
+    <!-- Le styles -->
+    <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <style>
+    body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    }
+    .table-video td {
+        vertical-align : middle;
+    }
+    .thumbnail:hover {
+        border: 1px solid #0088cc;
+    }
+    </style>
+    
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <script src="lib/jquery/jquery.js"></script>
+    <script src="lib/jquery/jquery.cookie.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.js"></script>
+    <script src="lib/angular/angular.js"></script>
+    <script>
+    $(document).ready(function(){
+        
+    });
+    
+    //***********************************************
+    // "Insert in database" function
+    //***********************************************
+    function insertInDB() {
+        if ($('#insertkey').val().length > 0
+            && $('#insertvalue').val().length > 0) {
+        
+            $('#insertBtn').attr('disabled', 'disabled');
+            
+            $.ajax({
+                type: "POST",
+                url: "/fdb",
+                data: JSON.stringify( { key:$('#insertkey').val(), value:$('#insertvalue').val() } ),
+                success: function(data, textStatus, jqXHR) {
+                    alert("Success!");
+                    $('#insertkey').val('');
+                    $('#insertvalue').val('');
+                },
+                contentType: "application/json"
+            })
+            .fail(function() {
+                alert("Sorry, there is an error...");
+            })
+            .always(function() {
+                $('#insertBtn').removeAttr('disabled');
+            });
+        }
+        else {
+            alert("Please, you have to provide a key and a value");
+        }
+        
+        return false;
+    }
+    
+    //***********************************************
+    // "Search in database" function
+    //***********************************************
+    function searchInDB() {
+        if ($('#querykey').val().length > 0) {
+        
+            $('#queryvalue').val('');
+            $('#searchBtn').attr('disabled', 'disabled');
+            
+            $.ajax({
+                type: "GET",
+                url: "/fdb/" + $('#querykey').val(),
+                success: function(data, textStatus, jqXHR) {
+                    $('#queryvalue').val(data.value);
+                },
+                contentType: "application/json"
+            })
+            .fail(function() {
+                alert("Sorry, there is an error...");
+            })
+            .always(function() {
+                $('#searchBtn').removeAttr('disabled');
+            });
+        }
+        else {
+            alert("Please, you have to provide a key and a value");
+        }
+        
+        return false;
+    }
+    </script>
+    
+</head>
+
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="index.html">FoundationDB Examples</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="index.html">Basic</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="page-header">
+            <h3>Basic Examples</h3>
+        </div>
+      
+        <div class="row">
+            <div class="span12">
+            
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#insert" data-toggle="tab">Insert</a></li>
+                    <li><a href="#query" data-toggle="tab">Query</a></li>
+                </ul>
+                
+                <div class="tab-content">
+                    <div class="tab-pane active" id="insert">
+                        <form class="well form-inline">
+                            Key : <input class="input-medium" id="insertkey" placeholder="Type a key">
+                            Value : <input class="input-medium" id="insertvalue" placeholder="Type a value">
+                            <button class="btn btn-primary" onClick="insertInDB()" id="insertBtn">Insert</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="query">
+                        <form class="well form-inline">
+                            Key : <input class="input-medium" id="querykey" placeholder="Type a key">
+                            Value : <input class="input-medium uneditable-input" id="queryvalue">
+                            <button class="btn btn-primary" onClick="searchInDB()" id="searchBtn">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>            
+    </div>
+</body>
+</html>
