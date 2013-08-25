@@ -19,3 +19,9 @@ Various FoundationDB examples.
 ``` bash
      node app
 ```
+
+## Snapshots
+
+![Set a value](/public/img/test1.png)
+![Find by key](/public/img/query_by_key.png)
+![Find by range](/public/img/query_by_range.png)
