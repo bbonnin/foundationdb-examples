@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>FoundationDB Examples</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="html5, angularjs, nodejs, foundationdb">
+    <meta name="description" content="twitter bootstrap, nodejs, foundationdb">
     <meta name="author" content="Bruno Bonnin">
     
     <!-- Le styles -->
     <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <style>
     body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -21,6 +20,7 @@
         border: 1px solid #0088cc;
     }
     </style>
+    <link href="lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -30,82 +30,16 @@
     <script src="lib/jquery/jquery.js"></script>
     <script src="lib/jquery/jquery.cookie.js"></script>
     <script src="lib/bootstrap/js/bootstrap.js"></script>
-    <script src="lib/angular/angular.js"></script>
+    <script src="js/fdb.js"></script>
     <script>
     $(document).ready(function(){
-        
+        $(".alert").hide();
+        $("#queryvalues").hide();
     });
-    
-    //***********************************************
-    // "Insert in database" function
-    //***********************************************
-    function insertInDB() {
-        if ($('#insertkey').val().length > 0
-            && $('#insertvalue').val().length > 0) {
-        
-            $('#insertBtn').attr('disabled', 'disabled');
-            
-            $.ajax({
-                type: "POST",
-                url: "/fdb",
-                data: JSON.stringify( { key:$('#insertkey').val(), value:$('#insertvalue').val() } ),
-                success: function(data, textStatus, jqXHR) {
-                    alert("Success!");
-                    $('#insertkey').val('');
-                    $('#insertvalue').val('');
-                },
-                contentType: "application/json"
-            })
-            .fail(function() {
-                alert("Sorry, there is an error...");
-            })
-            .always(function() {
-                $('#insertBtn').removeAttr('disabled');
-            });
-        }
-        else {
-            alert("Please, you have to provide a key and a value");
-        }
-        
-        return false;
-    }
-    
-    //***********************************************
-    // "Search in database" function
-    //***********************************************
-    function searchInDB() {
-        if ($('#querykey').val().length > 0) {
-        
-            $('#queryvalue').val('');
-            $('#searchBtn').attr('disabled', 'disabled');
-            
-            $.ajax({
-                type: "GET",
-                url: "/fdb/" + $('#querykey').val(),
-                success: function(data, textStatus, jqXHR) {
-                    $('#queryvalue').val(data.value);
-                },
-                contentType: "application/json"
-            })
-            .fail(function() {
-                alert("Sorry, there is an error...");
-            })
-            .always(function() {
-                $('#searchBtn').removeAttr('disabled');
-            });
-        }
-        else {
-            alert("Please, you have to provide a key and a value");
-        }
-        
-        return false;
-    }
     </script>
-    
 </head>
 
 <body>
-
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
@@ -118,6 +52,7 @@
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         <li class="active"><a href="index.html">Basic</a></li>
+                        <li><a href="#">Transactions</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -132,26 +67,51 @@
       
         <div class="row">
             <div class="span12">
-            
+
+                <div class="alert">
+                    <button type="button" class="close" onclick="hideAlert()">&times;</button>
+                    <div id="alert-message"></div>
+                </div>
+        
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#insert" data-toggle="tab">Insert</a></li>
-                    <li><a href="#query" data-toggle="tab">Query</a></li>
+                    <li><a href="#query-findbykey" data-toggle="tab">Query - Find by key</a></li>
+                    <li><a href="#query-findbyrange" data-toggle="tab">Query - Find by range</a></li>
                 </ul>
                 
                 <div class="tab-content">
                     <div class="tab-pane active" id="insert">
-                        <form class="well form-inline">
+                        <form class="well form-inline" onsubmit="return false">
                             Key : <input class="input-medium" id="insertkey" placeholder="Type a key">
                             Value : <input class="input-medium" id="insertvalue" placeholder="Type a value">
                             <button class="btn btn-primary" onClick="insertInDB()" id="insertBtn">Insert</button>
                         </form>
                     </div>
-                    <div class="tab-pane" id="query">
-                        <form class="well form-inline">
+                    <div class="tab-pane" id="query-findbykey">
+                        <form class="well form-inline" onsubmit="return false">
                             Key : <input class="input-medium" id="querykey" placeholder="Type a key">
                             Value : <input class="input-medium uneditable-input" id="queryvalue">
-                            <button class="btn btn-primary" onClick="searchInDB()" id="searchBtn">Search</button>
+                            <button class="btn btn-primary" onClick="findByKeyInDB()" id="findByKeyBtn">Search</button>
                         </form>
+                    </div>
+                    <div class="tab-pane" id="query-findbyrange">
+                        <form class="well form-inline" onsubmit="return false">
+                            Begin : <input class="input-medium" id="querybegin">
+                            End : <input class="input-medium" id="queryend">
+                            <button class="btn btn-primary" onClick="findByRangeInDB()" id="findByRangeBtn">Search</button>
+                        </form>
+                        <div id="queryvalues">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="valuelist">
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 </div>
             </div>

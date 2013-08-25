@@ -1,4 +1,4 @@
-Foundationdb
+FoundationDB
 ============
 
 Various FoundationDB examples.
