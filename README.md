@@ -1,7 +1,7 @@
 FoundationDB
 ============
 
-Various FoundationDB examples (each one display Javascript code for NodeJS).
+Various FoundationDB examples for NodeJS : each HTML page displays Javascript code.
 
 * [FoundationDB] (http://foundationdb.com/), [NodeJS API] (http://foundationdb.com/documentation/beta2/api-node.html)
 * [Node.js](http://nodejs.org/), [Express](http://expressjs.com/) (REST API)
