@@ -9,6 +9,7 @@ function insertInDB() {
         && $('#insertvalue').val().length > 0) {
 
         $('#insertBtn').attr('disabled', 'disabled');
+        $('#insertBtn').text('Inserting...');
             
         $.ajax({
             type: "POST",
@@ -26,6 +27,7 @@ function insertInDB() {
         })
         .always(function() {
             $('#insertBtn').removeAttr('disabled');
+            $('#insertBtn').text('Insert');
         });
     }
     else {

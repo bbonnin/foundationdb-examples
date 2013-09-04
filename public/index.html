@@ -27,8 +27,8 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?skin=desert"></script>
     <script src="lib/jquery/jquery.js"></script>
-    <script src="lib/jquery/jquery.cookie.js"></script>
     <script src="lib/bootstrap/js/bootstrap.js"></script>
     <script src="js/fdb.js"></script>
     <script>
@@ -86,6 +86,25 @@
                             Value : <input class="input-medium" id="insertvalue" placeholder="Type a value">
                             <button class="btn btn-primary" onClick="insertInDB()" id="insertBtn">Insert</button>
                         </form>
+                        <pre class="prettyprint lang-js">
+/*
+ * Insertion in FoundationDB.
+ * HTTP Request : POST
+ * Body : { key : ..., value : ... }
+ */
+function insertValue(req, resp) {
+    var data = req.body;
+    db.set(data.key, data.value, function(error, result) {
+        if (error) {
+            console.warn(error);
+            resp.send(500);
+        }
+        else {
+            resp.send(204);
+        }
+    });
+}
+                        </pre>
                     </div>
                     <div class="tab-pane" id="query-findbykey">
                         <form class="well form-inline" onsubmit="return false">

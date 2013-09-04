@@ -61,10 +61,9 @@ function findByKey(req, resp) {
 function findByRange(req, resp) {
     var begin = req.query.begin;
     var end = req.query.end;
-    console.log("findByRange: begin=" + begin + ", end=" + end);
     db.getRange(begin, end, {}, function(error, results) {
         if (error) {
-            console.warn("ERROR : "  + error);
+            console.warn("ERROR : " + error);
             resp.send(500);
         }
         else if (results) {
@@ -86,7 +85,7 @@ function insertValue(req, resp) {
     var data = req.body;
     db.set(data.key, data.value, function(error, result) {
         if (error) {
-            console.warn(error);
+            console.warn("ERROR : " + error);
             resp.send(500);
         }
         else {
@@ -99,7 +98,7 @@ function deleteValue(req, resp) {
     var key = req.params.key;
     db.clear(key, function(error, result) {
         if (error) {
-            console.warn("ERROR : "  + error);
+            console.warn("ERROR : " + error);
             resp.send(500);
         }
         else if (result) {
