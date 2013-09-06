@@ -52,8 +52,12 @@
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         <li class="active"><a href="index.html">Basic</a></li>
-                        <li><a href="#">Transactions</a></li>
+                        <li><a href="javascript:alert('Not implemented.');">Transactions</a></li>
                     </ul>
+                    <form class="navbar-form pull-right">
+                        <a href="http://foundationdb.com/" class="btn btn-primary">Go to FoundationDB</a>
+                    </form>
+                    
                 </div><!--/.nav-collapse -->
             </div>
         </div>
@@ -112,6 +116,27 @@ function insertValue(req, resp) {
                             Value : <input class="input-medium uneditable-input" id="queryvalue">
                             <button class="btn btn-primary" onClick="findByKeyInDB()" id="findByKeyBtn">Search</button>
                         </form>
+                        <pre class="prettyprint lang-js">
+/*
+ * Find a value by name.
+ * HTTP Request : GET /fdb?key=...
+ */
+function findByKey(req, resp) {
+    var key = req.query.key;
+    db.get(key, function(error, result) {
+        if (error) {
+            console.warn("ERROR : "  + error);
+            resp.send(500);
+        }
+        else if (result) {
+            resp.send({ key : key, value : result.toString() });
+        }
+        else {
+            resp.send(404);
+        }
+    });
+}
+                        </pre>
                     </div>
                     <div class="tab-pane" id="query-findbyrange">
                         <form class="well form-inline" onsubmit="return false">
@@ -131,6 +156,34 @@ function insertValue(req, resp) {
                             </tbody>
                         </table>
                         </div>
+                        <pre class="prettyprint lang-js">
+/*
+ * Find values by range.
+ * HTTP Request : GET /fdb?begin=...&end=...
+ */
+ function findByRange(req, resp) {
+    var begin = req.query.begin;
+    var end = req.query.end;
+    db.getRange(begin, end, {}, function(error, results) {
+        if (error) {
+            console.warn("ERROR : " + error);
+            resp.send(500);
+        }
+        else if (results) {
+            var values = [];
+            results.forEach(function(result, index) {
+                values.push({ key : result.key.toString(), 
+                                value : result.value.toString() });
+            });
+            resp.send({ range : { begin : begin, end : end },
+                        values : values });
+        }
+        else {
+            resp.send(404);
+        }
+    });
+}
+                        </pre>
                     </div>
                 </div>
             </div>
